@@ -1,21 +1,23 @@
 package com.example.nbd.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.UUID;
 
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
+@Entity
+@Table(name = "rents")
 public class Rent {
-    private Date begin;
-    private Date end;
-    private UUID clientID;
-    private UUID virtualDeviceID;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long rentId;
+    private LocalDate beginDate;
+    private LocalDate endDate;
+    private Long clientID;
+    private Long virtualDeviceID;
+
 
 }

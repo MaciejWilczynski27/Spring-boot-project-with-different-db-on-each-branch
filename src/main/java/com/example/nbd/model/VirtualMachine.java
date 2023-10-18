@@ -1,18 +1,8 @@
 package com.example.nbd.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@EqualsAndHashCode
-public class VirtualMachine {
-    private int cpuCores;
-    private int ram;
-    private OperatingSystem operatingSystem;
-    private int storageSize;
-    boolean isRented;
+@Data
+public class VirtualMachine extends VirtualDevice{
+    private String operatingSystem;
 }

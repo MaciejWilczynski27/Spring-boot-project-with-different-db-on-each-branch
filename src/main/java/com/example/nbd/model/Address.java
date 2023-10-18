@@ -1,17 +1,18 @@
 package com.example.nbd.model;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
 
 
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode
+@Entity
+@Table(name = "addresses")
+@Data
 public class Address {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String city;
     private String street;
     private String houseNumber;
