@@ -22,6 +22,7 @@ class Nbd2023KmMwApplicationTests {
     void clientTest(){
 
         clientManager.addClient();
+
     }
 
 }

@@ -17,9 +17,10 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
+   // private boolean isActive;
     private String lastName;
     private ClientType clientType;
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "address_id")
     private Address address;
 }
