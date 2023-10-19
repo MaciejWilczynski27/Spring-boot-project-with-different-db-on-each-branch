@@ -5,7 +5,7 @@ import com.example.nbd.model.Address;
 import com.example.nbd.model.Client;
 import com.example.nbd.model.Rent;
 import com.example.nbd.model.enums.ClientType;
-import com.example.nbd.repositories.AdressRepository;
+import com.example.nbd.repositories.AddressRepository;
 import com.example.nbd.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,7 @@ public class ClientManager {
     @Autowired
     ClientRepository clientRepository;
     @Autowired
-    AdressRepository adressRepository;
+    AddressRepository adressRepository;
 
     public void addClient(String firstName,String lastName, ClientType clientType,
                           String city, String street, String houseNumber) throws DuplicateRecordException {
