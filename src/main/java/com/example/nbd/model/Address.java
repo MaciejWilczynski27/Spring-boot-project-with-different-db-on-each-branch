@@ -2,7 +2,6 @@ package com.example.nbd.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Entity

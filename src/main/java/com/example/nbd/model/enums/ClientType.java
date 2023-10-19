@@ -1,4 +1,4 @@
-package com.example.nbd.model;
+package com.example.nbd.model.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
