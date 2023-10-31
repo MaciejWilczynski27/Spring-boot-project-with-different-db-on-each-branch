@@ -4,5 +4,6 @@ public enum OperatingSystemType {
     CENTOS,
     DEBIAN,
     FEDORA,
+    MACOS,
     WINDOWS
 }

@@ -59,5 +59,25 @@ public class ClientManager {
       var clientOpt =  clientRepository.findById(client.getId());
       clientOpt.ifPresent(value -> value.getActiveRents().add(rent));
     }
+    public void updateClientfirstNameAndLastName(Long id, String firstName, String lastName) {
+        var clientOpt = clientRepository.findById(id);
+        clientOpt.ifPresent(value -> {
+            value.setFirstName(firstName);
+            value.setLastName(lastName);
+        });
+    }
+    public void updateClientAddress(Long id, String city, String street, String houseNumber) {
+        var clientOpt = clientRepository.findById(id);
+        clientOpt.ifPresent(value -> {
+            value.getAddress().setCity(city);
+            value.getAddress().setStreet(street);
+            value.getAddress().setHouseNumber(houseNumber);
+        });
+    }
+    public void updateClientType(Long id, ClientType clientType) {
+        var clientOpt = clientRepository.findById(id);
+        clientOpt.ifPresent(value -> value.setClientType(clientType));
+    }
+
 
 }

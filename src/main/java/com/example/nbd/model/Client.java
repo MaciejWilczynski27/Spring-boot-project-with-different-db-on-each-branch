@@ -27,4 +27,5 @@ public class Client {
     private Address address;
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "client",cascade = CascadeType.ALL)
     private List<Rent> activeRents = new ArrayList<>();
+
 }

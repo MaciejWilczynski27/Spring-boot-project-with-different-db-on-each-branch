@@ -3,7 +3,8 @@ package com.example.nbd.model;
 import com.example.nbd.model.virtualdevices.VirtualDevice;
 import jakarta.persistence.*;
 import lombok.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "rents")
@@ -11,8 +12,8 @@ public class Rent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rentId;
-    private LocalDate beginDate;
-    private LocalDate endDate;
+    private LocalDateTime startLocalDateTime;
+    private LocalDateTime endLocalDateTime;
     @ManyToOne
     @JoinColumn
     private Client client;
