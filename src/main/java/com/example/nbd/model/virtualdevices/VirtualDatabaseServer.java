@@ -1,14 +1,12 @@
 package com.example.nbd.model.virtualdevices;
 
 import com.example.nbd.model.enums.DatabaseType;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @ToString(callSuper = true)
-@Entity
-@DiscriminatorValue("virtualdatabaseserver")
+@Document
 public class VirtualDatabaseServer extends VirtualDevice {
     private DatabaseType database;
 }

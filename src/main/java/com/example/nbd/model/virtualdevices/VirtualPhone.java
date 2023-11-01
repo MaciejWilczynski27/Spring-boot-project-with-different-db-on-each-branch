@@ -1,13 +1,11 @@
 package com.example.nbd.model.virtualdevices;
 
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @ToString(callSuper = true)
-@Entity
-@DiscriminatorValue("virtualphone")
+@Document
 public class VirtualPhone extends VirtualDevice {
     private int phoneNumber;
 

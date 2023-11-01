@@ -5,7 +5,6 @@ import com.example.nbd.model.Address;
 import com.example.nbd.model.Client;
 import com.example.nbd.model.Rent;
 import com.example.nbd.model.enums.ClientType;
-import com.example.nbd.repositories.AddressRepository;
 import com.example.nbd.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,8 +17,7 @@ public class ClientManager {
 
     @Autowired
     ClientRepository clientRepository;
-    @Autowired
-    AddressRepository adressRepository;
+
 
     public void addClient(String firstName,String lastName, ClientType clientType,
                           String city, String street, String houseNumber) throws DuplicateRecordException {
@@ -28,7 +26,6 @@ public class ClientManager {
         address.setCity(city);
         address.setStreet(street);
         address.setHouseNumber(houseNumber);
-        adressRepository.save(address);
         client.setClientType(clientType);
         client.setAddress(address);
         client.setFirstName(firstName);
@@ -45,28 +42,28 @@ public class ClientManager {
         clientRepository.save(client);
     }
 
-    public void deleteClient(Long id) {
+    public void deleteClient(String id) {
         clientRepository.deleteById(id);
     }
 
     public List<Client> findAllClients() {
         return clientRepository.findAll();
     }
-    public Client findClientById(Long id) {
+    public Client findClientById(String id) {
         return clientRepository.findById(id).orElse(null);
     }
     public void addRent(Client client, Rent rent) {
       var clientOpt =  clientRepository.findById(client.getId());
-      clientOpt.ifPresent(value -> value.getActiveRents().add(rent));
+      clientOpt.ifPresent(value -> value.getActiveRents().add(rent.getRentId()));
     }
-    public void updateClientfirstNameAndLastName(Long id, String firstName, String lastName) {
+    public void updateClientfirstNameAndLastName(String id, String firstName, String lastName) {
         var clientOpt = clientRepository.findById(id);
         clientOpt.ifPresent(value -> {
             value.setFirstName(firstName);
             value.setLastName(lastName);
         });
     }
-    public void updateClientAddress(Long id, String city, String street, String houseNumber) {
+    public void updateClientAddress(String id, String city, String street, String houseNumber) {
         var clientOpt = clientRepository.findById(id);
         clientOpt.ifPresent(value -> {
             value.getAddress().setCity(city);
@@ -74,7 +71,7 @@ public class ClientManager {
             value.getAddress().setHouseNumber(houseNumber);
         });
     }
-    public void updateClientType(Long id, ClientType clientType) {
+    public void updateClientType(String id, ClientType clientType) {
         var clientOpt = clientRepository.findById(id);
         clientOpt.ifPresent(value -> value.setClientType(clientType));
     }

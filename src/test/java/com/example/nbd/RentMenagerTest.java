@@ -38,7 +38,7 @@ class RentMenagerTest {
         virtualDeviceManager.addVirtualMachine(8,8,512, OperatingSystemType.DEBIAN);
         virtualDeviceManager.addVirtualPhone(4,4,128,782921842);
         virtualDeviceManager.addVirtualDatabaseServer(32,128,4096, DatabaseType.POSTGRESQL);
-        Long bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        String bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         rentManager.startRent(clientManager.findAllClients().get(0),virtualDeviceManager.getVirtualDeviceById(bufferedDeviceId), LocalDateTime.now(),LocalDateTime.now().plusWeeks(2L));
         rentManager.startRent(clientManager.findAllClients().get(1),virtualDeviceManager.getVirtualDeviceById(bufferedDeviceId), LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(1));
     }
@@ -71,7 +71,7 @@ class RentMenagerTest {
     @Transactional
     void endRentTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
         createTestingData();
-        Long bufferedRentId = rentManager.findAllRents().get(0).getRentId();
+        String bufferedRentId = rentManager.findAllRents().get(0).getRentId();
         rentManager.endRent(rentManager.findAllRents().get(0));
         Assertions.assertThat(rentManager.findRentById(bufferedRentId).getEndLocalDateTime() != null).isTrue();
     }
@@ -79,8 +79,8 @@ class RentMenagerTest {
     @Transactional
     void clientCantRentExceptionTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
         createTestingData();
-        Long bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
-        Long tempId = clientManager.findAllClients().get(0).getId();
+        String bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        String tempId = clientManager.findAllClients().get(0).getId();
         clientManager.findClientById(tempId).setActive(false);
         try {
             rentManager.startRent(clientManager.findClientById(tempId), virtualDeviceManager.getVirtualDeviceById(bufferedDeviceId),LocalDateTime.now(),LocalDateTime.now().plusWeeks(2L));
@@ -102,7 +102,7 @@ class RentMenagerTest {
     @Transactional
     public void deviceAlreadyRentedExceptionTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
         createTestingData();
-        Long bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        String bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         try {
             rentManager.startRent(clientManager.findAllClients().get(2),virtualDeviceManager.getVirtualDeviceById(bufferedDeviceId),LocalDateTime.now().minusDays(1L),LocalDateTime.now().plusWeeks(1L));
             Assertions.fail("Exception has not been thrown");
@@ -111,11 +111,11 @@ class RentMenagerTest {
         }
     }
     @Test
-    @Transactional
+   // @Transactional
     public void updateEndLocalDateTimeTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
         createTestingData();
-        Long bufferedRentId = rentManager.findAllRents().get(0).getRentId();
-        Long bufferedRentId2 = rentManager.findAllRents().get(1).getRentId();
+        String bufferedRentId = rentManager.findAllRents().get(0).getRentId();
+        String bufferedRentId2 = rentManager.findAllRents().get(1).getRentId();
         System.out.println(rentManager.findRentById(bufferedRentId).toString());
         var bufferedNewLocalDateTime = LocalDateTime.now().plusWeeks(3L);
         rentManager.updateEndLocalDateTime(bufferedRentId,bufferedNewLocalDateTime);

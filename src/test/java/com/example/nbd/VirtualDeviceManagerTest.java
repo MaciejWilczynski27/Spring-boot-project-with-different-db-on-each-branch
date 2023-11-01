@@ -33,7 +33,7 @@ public class VirtualDeviceManagerTest {
     void deleteVirtualDeviceTest() {
         createVirtualDevices();
         int virtualDeviceBuffer = virtualDeviceManager.findAllVirtualDevices().size();
-        Long bufferedId= virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        String bufferedId= virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         virtualDeviceManager.deleteVirtualDevice(bufferedId);
         Assertions.assertThat(virtualDeviceManager.findAllVirtualDevices().size() == virtualDeviceBuffer - 1).isTrue();
         Assertions.assertThat(virtualDeviceManager.getVirtualDeviceById(bufferedId) == null).isTrue();
@@ -49,7 +49,7 @@ public class VirtualDeviceManagerTest {
     @Transactional
     void updateVirtualDeviceRamTest() {
         createVirtualDevices();
-        Long bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         virtualDeviceManager.updateVirtualDeviceRam(bufferedId, 16);
         Assertions.assertThat(virtualDeviceManager.getVirtualDeviceById(bufferedId).getRam() == 16).isTrue();
         virtualDeviceManager.updateVirtualDeviceRam(bufferedId, 32);
@@ -59,7 +59,7 @@ public class VirtualDeviceManagerTest {
     @Transactional
     void updateVirtualDeviceStorageSizeTest() {
         createVirtualDevices();
-        Long bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         virtualDeviceManager.updateVirtualDeviceStorageSize(bufferedId, 1024);
         Assertions.assertThat(virtualDeviceManager.getVirtualDeviceById(bufferedId).getStorageSize() == 1024).isTrue();
         virtualDeviceManager.updateVirtualDeviceStorageSize(bufferedId, 2048);
@@ -69,7 +69,7 @@ public class VirtualDeviceManagerTest {
     @Transactional
     void updateVirtualDeviceCpuCoresTest() {
         createVirtualDevices();
-        Long bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         virtualDeviceManager.updateVirtualDeviceCpuCores(bufferedId, 16);
         Assertions.assertThat(virtualDeviceManager.getVirtualDeviceById(bufferedId).getCpuCores() == 16).isTrue();
         virtualDeviceManager.updateVirtualDeviceCpuCores(bufferedId, 32);
@@ -79,7 +79,7 @@ public class VirtualDeviceManagerTest {
     @Transactional
     void updateVirtualMachineOperatingSystemTypeTest() throws NoMatchingDeviceFoundException {
         createVirtualDevices();
-        Long bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         virtualDeviceManager.updateVirtualMachineOperatingSystemType(bufferedId, OperatingSystemType.WINDOWS);
         Assertions.assertThat(virtualDeviceManager.getVirtualMachineOperatingSystemType(bufferedId) == OperatingSystemType.WINDOWS).isTrue();
         virtualDeviceManager.updateVirtualMachineOperatingSystemType(bufferedId, OperatingSystemType.MACOS);
@@ -89,7 +89,7 @@ public class VirtualDeviceManagerTest {
     @Transactional
     void updateVirtualDatabaseServerDatabaseTypeTest() throws NoMatchingDeviceFoundException {
         createVirtualDevices();
-        Long bufferedId = virtualDeviceManager.findAllVirtualDevices().get(2).getId();
+        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(2).getId();
         virtualDeviceManager.updateVirtualDatabaseServerDatabaseType(bufferedId, DatabaseType.MYSQL);
         Assertions.assertThat(virtualDeviceManager.getVirtualDatabaseServerDatabaseType(bufferedId) == DatabaseType.MYSQL).isTrue();
         virtualDeviceManager.updateVirtualDatabaseServerDatabaseType(bufferedId, DatabaseType.ORACLE);
@@ -99,7 +99,7 @@ public class VirtualDeviceManagerTest {
     @Transactional
     void updateVirtualPhonePhoneNumberTest() throws NoMatchingDeviceFoundException {
         createVirtualDevices();
-        Long bufferedId = virtualDeviceManager.findAllVirtualDevices().get(1).getId();
+        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(1).getId();
         virtualDeviceManager.updateVirtualPhonePhoneNumber(bufferedId, 123456789);
         Assertions.assertThat(virtualDeviceManager.getVirtualPhonePhoneNumber(bufferedId) == 123456789).isTrue();
         virtualDeviceManager.updateVirtualPhonePhoneNumber(bufferedId, 987654321);

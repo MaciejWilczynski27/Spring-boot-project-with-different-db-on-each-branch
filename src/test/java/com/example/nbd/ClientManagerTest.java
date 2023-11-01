@@ -43,7 +43,7 @@ public class ClientManagerTest {
     void deleteClientTest() throws DuplicateRecordException {
         addClients();
         int buffer = clientManager.findAllClients().size();
-        Long idBuffer = clientManager.findAllClients().get(0).getId();
+        String idBuffer = clientManager.findAllClients().get(0).getId();
         clientManager.deleteClient(idBuffer);
         Assertions.assertThat(clientManager.findAllClients().size() == buffer - 1).isTrue();
         Assertions.assertThat(clientManager.findClientById(idBuffer) == null).isTrue();
@@ -59,7 +59,7 @@ public class ClientManagerTest {
     @Transactional
     void updateClientTypeTest() throws DuplicateRecordException {
         addClients();
-        Long idBuffer = clientManager.findAllClients().get(0).getId();
+        String idBuffer = clientManager.findAllClients().get(0).getId();
         clientManager.updateClientType(idBuffer,ClientType.DIAMOND);
         Assertions.assertThat(clientManager.findClientById(idBuffer).getClientType().equals(ClientType.DIAMOND)).isTrue();
         clientManager.updateClientType(idBuffer,ClientType.BRONZE);
@@ -69,7 +69,7 @@ public class ClientManagerTest {
     @Transactional
     void updateFirstNameAndLastNameTest() throws DuplicateRecordException {
         addClients();
-        Long idBuffer = clientManager.findAllClients().get(0).getId();
+        String idBuffer = clientManager.findAllClients().get(0).getId();
         clientManager.updateClientfirstNameAndLastName(idBuffer,"Jan","Kowalski");
         Assertions.assertThat(clientManager.findClientById(idBuffer).getFirstName().equals("Jan")).isTrue();
         Assertions.assertThat(clientManager.findClientById(idBuffer).getLastName().equals("Kowalski")).isTrue();
@@ -81,7 +81,7 @@ public class ClientManagerTest {
     @Transactional
     void updateAddressTest() throws DuplicateRecordException {
         addClients();
-        Long idBuffer = clientManager.findAllClients().get(0).getId();
+        String idBuffer = clientManager.findAllClients().get(0).getId();
         clientManager.updateClientAddress(idBuffer,"Warszawa","Nowy Swiat","7");
         Assertions.assertThat(clientManager.findClientById(idBuffer).getAddress().getCity().equals("Warszawa")).isTrue();
         Assertions.assertThat(clientManager.findClientById(idBuffer).getAddress().getStreet().equals("Nowy Swiat")).isTrue();

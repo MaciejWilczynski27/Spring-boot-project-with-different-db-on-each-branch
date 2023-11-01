@@ -7,6 +7,7 @@ import com.example.nbd.model.Client;
 import com.example.nbd.model.Rent;
 import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.repositories.RentRepository;
+import com.example.nbd.repositories.VirtualDeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -20,6 +21,8 @@ import java.util.List;
 public class RentManager {
     @Autowired
     RentRepository rentRepository;
+    @Autowired
+    VirtualDeviceRepository virtualDeviceRepository;
     @Autowired
     ClientManager clientManager;
 
@@ -35,8 +38,8 @@ public class RentManager {
             Rent rent = new Rent();
             rent.setStartLocalDateTime(startLocalDateTime);
             rent.setEndLocalDateTime(endLocalDateTime);
-            rent.setClient(client);
-            rent.setVirtualDevice(virtualDevice);
+            rent.setClientId(client.getId());
+            rent.setVirtualDeviceId(virtualDevice.getId());
             rentRepository.save(rent);
             clientManager.addRent(client,rent);
         } else {
@@ -44,26 +47,27 @@ public class RentManager {
         }
     }
     public void endRent(Rent rent) {
-        rent.getClient().getActiveRents().remove(rent);
+        clientManager.findClientById(rent.getClientId()).getActiveRents().remove(rent);
         rent.setEndLocalDateTime(LocalDateTime.now());
     }
     public List<Rent> findAllRents() {
         return rentRepository.findAll();
     }
-    public Rent findRentById(Long id) {
+    public Rent findRentById(String id) {
         return rentRepository.findById(id).orElse(null);
     }
-    public void updateEndLocalDateTime(Long id, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException {
+    public void updateEndLocalDateTime(String id, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException {
         Rent rent = rentRepository.findById(id).orElse(null);
         if(rent != null
-                && !willVirtualDeviceBeRented(rent.getVirtualDevice(),rent.getStartLocalDateTime(),endLocalDateTime)){
+                && !willVirtualDeviceBeRented(virtualDeviceRepository.findById(rentRepository.findById(id).get().getVirtualDeviceId()).get()
+                ,rent.getStartLocalDateTime(),endLocalDateTime)){
             rent.setEndLocalDateTime(endLocalDateTime);
         } else {
             throw new DeviceAlreadyRentedException();
         }
     }
     private boolean willVirtualDeviceBeRented(VirtualDevice virtualDevice, LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) {
-        return rentRepository.findAllByVirtualDeviceId(virtualDevice.getId()).stream().anyMatch(rent -> {
+        return rentRepository.findAllByVirtualDeviceId(virtualDevice.getId()) .stream().anyMatch(rent -> {
                 if(rent.getStartLocalDateTime().isBefore(startLocalDateTime) && rent.getEndLocalDateTime().isAfter(startLocalDateTime)) {
                     if(!rent.getStartLocalDateTime().isEqual(startLocalDateTime)) {
                         return true;

@@ -42,21 +42,21 @@ public class VirtualDeviceManager {
         virtualDevice.setStorageSize(storageSize);
         virtualDeviceRepository.save(virtualDevice);
     }
-    public void deleteVirtualDevice(Long id) {
+    public void deleteVirtualDevice(String id) {
         virtualDeviceRepository.deleteById(id);
     }
 
 
-    public void updateVirtualDeviceRam(Long id,int ram) {
+    public void updateVirtualDeviceRam(String id,int ram) {
         virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> virtualDevice.setRam(ram));
     }
-    public void updateVirtualDeviceStorageSize(Long id,int storageSize) {
+    public void updateVirtualDeviceStorageSize(String id,int storageSize) {
         virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> virtualDevice.setStorageSize(storageSize));
     }
-    public void updateVirtualDeviceCpuCores(Long id,int cpuCores) {
+    public void updateVirtualDeviceCpuCores(String id,int cpuCores) {
         virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> virtualDevice.setCpuCores(cpuCores));
     }
-    public void updateVirtualMachineOperatingSystemType(Long id,OperatingSystemType operatingSystemType) throws NoMatchingDeviceFoundException {
+    public void updateVirtualMachineOperatingSystemType(String id,OperatingSystemType operatingSystemType) throws NoMatchingDeviceFoundException {
         VirtualDevice virtualDevice = virtualDeviceRepository.findById(id).orElse(null);
         if(virtualDevice != null) {
             if(virtualDevice instanceof VirtualMachine) {
@@ -67,7 +67,7 @@ public class VirtualDeviceManager {
         throw new NoMatchingDeviceFoundException();
 
     }
-    public void updateVirtualDatabaseServerDatabaseType(Long id,DatabaseType databaseType) throws NoMatchingDeviceFoundException {
+    public void updateVirtualDatabaseServerDatabaseType(String id,DatabaseType databaseType) throws NoMatchingDeviceFoundException {
         VirtualDevice virtualDevice = virtualDeviceRepository.findById(id).orElse(null);
         if(virtualDevice != null) {
             if(virtualDevice instanceof VirtualDatabaseServer) {
@@ -77,7 +77,7 @@ public class VirtualDeviceManager {
         }
         throw new NoMatchingDeviceFoundException();
     }
-    public void updateVirtualPhonePhoneNumber(Long id,int phoneNumber) throws NoMatchingDeviceFoundException {
+    public void updateVirtualPhonePhoneNumber(String id,int phoneNumber) throws NoMatchingDeviceFoundException {
         VirtualDevice virtualDevice = virtualDeviceRepository.findById(id).orElse(null);
         if(virtualDevice != null) {
             if(virtualDevice instanceof VirtualPhone) {
@@ -87,7 +87,7 @@ public class VirtualDeviceManager {
         }
         throw new NoMatchingDeviceFoundException();
     }
-    public OperatingSystemType getVirtualMachineOperatingSystemType(Long id) throws NoMatchingDeviceFoundException {
+    public OperatingSystemType getVirtualMachineOperatingSystemType(String id) throws NoMatchingDeviceFoundException {
         VirtualDevice virtualDevice = virtualDeviceRepository.findById(id).orElse(null);
         if (virtualDevice != null) {
             if (virtualDevice instanceof VirtualMachine) {
@@ -96,7 +96,7 @@ public class VirtualDeviceManager {
         }
         throw new NoMatchingDeviceFoundException();
     }
-    public DatabaseType getVirtualDatabaseServerDatabaseType(Long id) throws NoMatchingDeviceFoundException {
+    public DatabaseType getVirtualDatabaseServerDatabaseType(String id) throws NoMatchingDeviceFoundException {
         VirtualDevice virtualDevice = virtualDeviceRepository.findById(id).orElse(null);
         if(virtualDevice != null) {
             if(virtualDevice instanceof VirtualDatabaseServer) {
@@ -105,7 +105,7 @@ public class VirtualDeviceManager {
         }
         throw new NoMatchingDeviceFoundException();
     }
-    public int getVirtualPhonePhoneNumber(Long id) throws NoMatchingDeviceFoundException {
+    public int getVirtualPhonePhoneNumber(String id) throws NoMatchingDeviceFoundException {
         VirtualDevice virtualDevice = virtualDeviceRepository.findById(id).orElse(null);
         if(virtualDevice != null) {
             if(virtualDevice instanceof VirtualPhone) {
@@ -117,7 +117,7 @@ public class VirtualDeviceManager {
     public List<VirtualDevice> findAllVirtualDevices() {
         return virtualDeviceRepository.findAll();
     }
-    public VirtualDevice getVirtualDeviceById(Long id) {
+    public VirtualDevice getVirtualDeviceById(String id) {
         return virtualDeviceRepository.findById(id).orElse(null);
     }
 
