@@ -8,6 +8,7 @@ import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.model.virtualdevices.VirtualMachine;
 import com.example.nbd.model.virtualdevices.VirtualPhone;
 import com.example.nbd.repositories.VirtualDeviceRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -17,9 +18,10 @@ import java.util.List;
 
 @Component
 @Transactional(isolation = Isolation.REPEATABLE_READ)
+@RequiredArgsConstructor
 public class VirtualDeviceManager {
-    @Autowired
-    VirtualDeviceRepository virtualDeviceRepository;
+
+    private final VirtualDeviceRepository virtualDeviceRepository;
 
     public void addVirtualPhone(int cpuCores,int ram, int storageSize, int number) {
         VirtualPhone virtualPhone = new VirtualPhone();

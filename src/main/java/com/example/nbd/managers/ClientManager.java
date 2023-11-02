@@ -6,17 +6,20 @@ import com.example.nbd.model.Client;
 import com.example.nbd.model.Rent;
 import com.example.nbd.model.enums.ClientType;
 import com.example.nbd.repositories.ClientRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
-@Transactional
+@Transactional(isolation = Isolation.REPEATABLE_READ)
+@RequiredArgsConstructor
 public class ClientManager {
 
-    @Autowired
-    ClientRepository clientRepository;
+
+    private final ClientRepository clientRepository;
 
 
     public void addClient(String firstName,String lastName, ClientType clientType,

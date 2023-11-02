@@ -10,9 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-@ToString(exclude = "activeRents")
-
-
 @Data
 @Document
 public class Client {

@@ -8,6 +8,7 @@ import com.example.nbd.model.Rent;
 import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.repositories.RentRepository;
 import com.example.nbd.repositories.VirtualDeviceRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -18,13 +19,14 @@ import java.util.List;
 
 @Component
 @Transactional(isolation = Isolation.REPEATABLE_READ)
+@RequiredArgsConstructor
 public class RentManager {
-    @Autowired
-    RentRepository rentRepository;
-    @Autowired
-    VirtualDeviceRepository virtualDeviceRepository;
-    @Autowired
-    ClientManager clientManager;
+
+    private final RentRepository rentRepository;
+
+    private final VirtualDeviceRepository virtualDeviceRepository;
+
+    private final ClientManager clientManager;
 
     public void startRent(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
         if(startLocalDateTime.isAfter(endLocalDateTime)) {

@@ -111,7 +111,7 @@ class RentMenagerTest {
         }
     }
     @Test
-   // @Transactional
+    @Transactional
     public void updateEndLocalDateTimeTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
         createTestingData();
         String bufferedRentId = rentManager.findAllRents().get(0).getRentId();

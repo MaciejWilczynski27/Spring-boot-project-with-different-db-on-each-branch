@@ -2,6 +2,7 @@ package com.example.nbd.model.virtualdevices;
 
 import com.example.nbd.model.enums.DatabaseType;
 import lombok.*;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data

@@ -20,6 +20,7 @@ public class VirtualDeviceManagerTest {
         virtualDeviceManager.addVirtualMachine(8, 8, 512, OperatingSystemType.DEBIAN);
         virtualDeviceManager.addVirtualPhone(4, 4, 128, 782921842);
         virtualDeviceManager.addVirtualDatabaseServer(32, 128, 4096, DatabaseType.POSTGRESQL);
+        virtualDeviceManager.findAllVirtualDevices().forEach(System.out::println);
     }
     @Test
     @Transactional
@@ -81,9 +82,11 @@ public class VirtualDeviceManagerTest {
         createVirtualDevices();
         String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         virtualDeviceManager.updateVirtualMachineOperatingSystemType(bufferedId, OperatingSystemType.WINDOWS);
-        Assertions.assertThat(virtualDeviceManager.getVirtualMachineOperatingSystemType(bufferedId) == OperatingSystemType.WINDOWS).isTrue();
+        Assertions.assertThat(virtualDeviceManager.getVirtualMachineOperatingSystemType(bufferedId).equals(OperatingSystemType.WINDOWS)).isTrue();
+        virtualDeviceManager.findAllVirtualDevices().forEach(System.out::println);
         virtualDeviceManager.updateVirtualMachineOperatingSystemType(bufferedId, OperatingSystemType.MACOS);
-        Assertions.assertThat(virtualDeviceManager.getVirtualMachineOperatingSystemType(bufferedId) ==OperatingSystemType.MACOS).isTrue();
+        Assertions.assertThat(virtualDeviceManager.getVirtualMachineOperatingSystemType(bufferedId).equals(OperatingSystemType.MACOS)).isTrue();
+        virtualDeviceManager.findAllVirtualDevices().forEach(System.out::println);
     }
     @Test
     @Transactional
