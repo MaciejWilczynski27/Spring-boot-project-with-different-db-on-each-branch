@@ -60,6 +60,9 @@ public class RentManager {
             clientRepository.save(client);
         });
     }
+    public void deleteRent(String id) {
+        rentRepository.deleteById(id);
+    }
     public List<Rent> findAllRents() {
         return rentRepository.findAll();
     }

@@ -98,6 +98,15 @@ class RentMenagerTest {
             Assertions.assertThat(e.getMessage().equals("Device is already rented")).isTrue();
         }
     }
+
+    @Test
+    @Transactional
+    public void deleteRentTest() throws DuplicateRecordException, ClientIsNotActiveException, InvalidDatesException, DeviceAlreadyRentedException, ClientHasTooManyRentsException {
+        createTestingData();
+        String bufferedRentId = rentManager.findAllRents().get(0).getRentId();
+        rentManager.deleteRent(bufferedRentId);
+        Assertions.assertThat(rentManager.findRentById(bufferedRentId) == null).isTrue();
+    }
     @Test
     @Transactional
     public void updateEndLocalDateTimeTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
