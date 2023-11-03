@@ -50,19 +50,29 @@ public class VirtualDeviceManager {
 
 
     public void updateVirtualDeviceRam(String id,int ram) {
-        virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> virtualDevice.setRam(ram));
+        virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> {
+            virtualDevice.setRam(ram);
+            virtualDeviceRepository.save(virtualDevice);
+        });
     }
     public void updateVirtualDeviceStorageSize(String id,int storageSize) {
-        virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> virtualDevice.setStorageSize(storageSize));
+        virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> {
+            virtualDevice.setStorageSize(storageSize);
+            virtualDeviceRepository.save(virtualDevice);
+        });
     }
     public void updateVirtualDeviceCpuCores(String id,int cpuCores) {
-        virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> virtualDevice.setCpuCores(cpuCores));
+        virtualDeviceRepository.findById(id).ifPresent(virtualDevice -> {
+            virtualDevice.setCpuCores(cpuCores);
+            virtualDeviceRepository.save(virtualDevice);
+        });
     }
     public void updateVirtualMachineOperatingSystemType(String id,OperatingSystemType operatingSystemType) throws NoMatchingDeviceFoundException {
         VirtualDevice virtualDevice = virtualDeviceRepository.findById(id).orElse(null);
         if(virtualDevice != null) {
             if(virtualDevice instanceof VirtualMachine) {
                 ((VirtualMachine) virtualDevice).setOperatingSystemType(operatingSystemType);
+                virtualDeviceRepository.save(virtualDevice);
                 return;
             }
         }
@@ -74,6 +84,7 @@ public class VirtualDeviceManager {
         if(virtualDevice != null) {
             if(virtualDevice instanceof VirtualDatabaseServer) {
                 ((VirtualDatabaseServer) virtualDevice).setDatabase(databaseType);
+                virtualDeviceRepository.save(virtualDevice);
                 return;
             }
         }
@@ -84,6 +95,7 @@ public class VirtualDeviceManager {
         if(virtualDevice != null) {
             if(virtualDevice instanceof VirtualPhone) {
                 ((VirtualPhone) virtualDevice).setPhoneNumber(phoneNumber);
+                virtualDeviceRepository.save(virtualDevice);
                 return;
             }
         }

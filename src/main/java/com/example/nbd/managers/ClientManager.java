@@ -57,13 +57,17 @@ public class ClientManager {
     }
     public void addRent(Client client, Rent rent) {
       var clientOpt =  clientRepository.findById(client.getId());
-      clientOpt.ifPresent(value -> value.getActiveRents().add(rent.getRentId()));
+      clientOpt.ifPresent(value -> {
+          value.getActiveRents().add(rent.getRentId());
+          clientRepository.save(value);
+      });
     }
     public void updateClientfirstNameAndLastName(String id, String firstName, String lastName) {
         var clientOpt = clientRepository.findById(id);
         clientOpt.ifPresent(value -> {
             value.setFirstName(firstName);
             value.setLastName(lastName);
+            clientRepository.save(value);
         });
     }
     public void updateClientAddress(String id, String city, String street, String houseNumber) {
@@ -72,11 +76,22 @@ public class ClientManager {
             value.getAddress().setCity(city);
             value.getAddress().setStreet(street);
             value.getAddress().setHouseNumber(houseNumber);
+            clientRepository.save(value);
         });
     }
     public void updateClientType(String id, ClientType clientType) {
         var clientOpt = clientRepository.findById(id);
-        clientOpt.ifPresent(value -> value.setClientType(clientType));
+        clientOpt.ifPresent(value -> {
+            value.setClientType(clientType);
+            clientRepository.save(value);
+        });
+    }
+    public void setActive(String id, boolean active) {
+        var clientOpt = clientRepository.findById(id);
+        clientOpt.ifPresent(value -> {
+            value.setActive(active);
+            clientRepository.save(value);
+        });
     }
 
 

@@ -1,9 +1,6 @@
 package com.example.nbd;
 
-import com.example.nbd.exceptions.ClientCantRentException;
-import com.example.nbd.exceptions.DeviceAlreadyRentedException;
-import com.example.nbd.exceptions.DuplicateRecordException;
-import com.example.nbd.exceptions.InvalidDatesException;
+import com.example.nbd.exceptions.*;
 import com.example.nbd.managers.ClientManager;
 import com.example.nbd.managers.RentManager;
 import com.example.nbd.managers.VirtualDeviceManager;
@@ -17,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @SpringBootTest
 class RentMenagerTest {
@@ -31,7 +29,7 @@ class RentMenagerTest {
     @Test
     void contextLoads() {
     }
-    private void createTestingData() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
+    private void createTestingData() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         clientManager.addClient("Mariusz","Pudzianowski", ClientType.BRONZE,"Lodz","Aleje Politechniki","4/7");
         clientManager.addClient("Adam","Małysz",ClientType.BRONZE,"Warszawa","Nowy Swiat","7");
         clientManager.addClient("Kamil","Stoch", ClientType.GOLD,"Pabianice","Jana Pawla 2","21");
@@ -45,7 +43,7 @@ class RentMenagerTest {
 
     @Test
     @Transactional
-    void findAllRentsTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
+    void findAllRentsTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         Integer bufferedRents = rentManager.findAllRents().size();
         createTestingData();
         Assertions.assertThat(rentManager.findAllRents().get(0).equals(rentManager.findRentById(rentManager.findAllRents().get(0).getRentId()))).isTrue();
@@ -54,14 +52,13 @@ class RentMenagerTest {
 
     @Test
     @Transactional
-    void clientCantRentTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
+    void clientHasTooManyRentsExceptionTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         createTestingData();
-        System.out.println(clientManager.findAllClients().get(0).toString());
         try {
             rentManager.startRent(clientManager.findAllClients().get(0),virtualDeviceManager.findAllVirtualDevices().get(0),LocalDateTime.now().plusWeeks(3L),LocalDateTime.now().plusWeeks(4L));
             Assertions.fail("Exception has not been thrown");
-        } catch (ClientCantRentException e) {
-            Assertions.assertThat(e.getMessage().equals("Client is inactive or has too many rents")).isTrue();
+        } catch (ClientHasTooManyRentsException e) {
+            Assertions.assertThat(e.getMessage().equals("Client has too many rents")).isTrue();
         } catch (DeviceAlreadyRentedException e) {
             throw new RuntimeException(e);
         }
@@ -69,7 +66,7 @@ class RentMenagerTest {
 
     @Test
     @Transactional
-    void endRentTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
+    void endRentTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         createTestingData();
         String bufferedRentId = rentManager.findAllRents().get(0).getRentId();
         rentManager.endRent(rentManager.findAllRents().get(0));
@@ -77,30 +74,21 @@ class RentMenagerTest {
     }
     @Test
     @Transactional
-    void clientCantRentExceptionTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
+    void clientIsNotActiveExceptionTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         createTestingData();
         String bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         String tempId = clientManager.findAllClients().get(0).getId();
-        clientManager.findClientById(tempId).setActive(false);
+        clientManager.setActive(tempId,false);
         try {
             rentManager.startRent(clientManager.findClientById(tempId), virtualDeviceManager.getVirtualDeviceById(bufferedDeviceId),LocalDateTime.now(),LocalDateTime.now().plusWeeks(2L));
             Assertions.fail("Exception has not been thrown");
-        } catch (ClientCantRentException e) {
-            Assertions.assertThat(e.getMessage().equals("Client is inactive or has too many rents")).isTrue();
-        }
-        rentManager.endRent(rentManager.findAllRents().get(0));
-        clientManager.findClientById(tempId).setActive(true);
-        rentManager.startRent(clientManager.findClientById(tempId),virtualDeviceManager.findAllVirtualDevices().get(0),LocalDateTime.now(),LocalDateTime.now().plusWeeks(2L));
-        try {
-            rentManager.startRent(clientManager.findClientById(tempId), virtualDeviceManager.findAllVirtualDevices().get(1),LocalDateTime.now(),LocalDateTime.now().plusWeeks(2L));
-            Assertions.fail("Exception has not been thrown");
-        } catch (ClientCantRentException e) {
-            Assertions.assertThat(e.getMessage().equals("Client is inactive or has too many rents")).isTrue();
+        } catch (ClientIsNotActiveException e) {
+            Assertions.assertThat(e.getMessage().equals("Client is not active")).isTrue();
         }
     }
     @Test
     @Transactional
-    public void deviceAlreadyRentedExceptionTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
+    public void deviceAlreadyRentedExceptionTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         createTestingData();
         String bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         try {
@@ -112,15 +100,15 @@ class RentMenagerTest {
     }
     @Test
     @Transactional
-    public void updateEndLocalDateTimeTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
+    public void updateEndLocalDateTimeTest() throws DuplicateRecordException, DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         createTestingData();
         String bufferedRentId = rentManager.findAllRents().get(0).getRentId();
         String bufferedRentId2 = rentManager.findAllRents().get(1).getRentId();
-        System.out.println(rentManager.findRentById(bufferedRentId).toString());
+
         var bufferedNewLocalDateTime = LocalDateTime.now().plusWeeks(3L);
         rentManager.updateEndLocalDateTime(bufferedRentId,bufferedNewLocalDateTime);
-        System.out.println(rentManager.findRentById(bufferedRentId).toString());
-        Assertions.assertThat(rentManager.findRentById(bufferedRentId).getEndLocalDateTime().isEqual(bufferedNewLocalDateTime)).isTrue();
+        Assertions.assertThat(rentManager.findRentById(bufferedRentId).getEndLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+                .isEqual(bufferedNewLocalDateTime.truncatedTo(ChronoUnit.MILLIS))).isTrue();
         try{
             rentManager.updateEndLocalDateTime(bufferedRentId2,LocalDateTime.now().plusWeeks(1L));
             Assertions.fail("Exception has not been thrown");
@@ -130,7 +118,7 @@ class RentMenagerTest {
     }
     @Test
     @Transactional
-    void invalidDatesExceptionTest() throws DeviceAlreadyRentedException, ClientCantRentException, DuplicateRecordException, InvalidDatesException {
+    void invalidDatesExceptionTest() throws DeviceAlreadyRentedException, ClientHasTooManyRentsException, DuplicateRecordException, InvalidDatesException, ClientIsNotActiveException {
         createTestingData();
         try {
             rentManager.startRent(clientManager.findAllClients().get(0),virtualDeviceManager.findAllVirtualDevices().get(0),LocalDateTime.now(),LocalDateTime.now().minusWeeks(1L));

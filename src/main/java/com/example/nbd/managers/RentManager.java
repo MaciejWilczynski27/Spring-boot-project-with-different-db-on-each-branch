@@ -1,15 +1,16 @@
 package com.example.nbd.managers;
 
-import com.example.nbd.exceptions.ClientCantRentException;
+import com.example.nbd.exceptions.ClientHasTooManyRentsException;
+import com.example.nbd.exceptions.ClientIsNotActiveException;
 import com.example.nbd.exceptions.DeviceAlreadyRentedException;
 import com.example.nbd.exceptions.InvalidDatesException;
 import com.example.nbd.model.Client;
 import com.example.nbd.model.Rent;
 import com.example.nbd.model.virtualdevices.VirtualDevice;
+import com.example.nbd.repositories.ClientRepository;
 import com.example.nbd.repositories.RentRepository;
 import com.example.nbd.repositories.VirtualDeviceRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +28,17 @@ public class RentManager {
     private final VirtualDeviceRepository virtualDeviceRepository;
 
     private final ClientManager clientManager;
+    private final ClientRepository clientRepository;
 
-    public void startRent(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientCantRentException, InvalidDatesException {
+    public void startRent(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         if(startLocalDateTime.isAfter(endLocalDateTime)) {
             throw new InvalidDatesException();
         }
-        if(!(client.isActive()
-                && client.getActiveRents().size() < client.getClientType().getValue())) {
-            throw new ClientCantRentException();
+        if(!client.isActive()) {
+            throw new ClientIsNotActiveException();
+        }
+        if(client.getActiveRents().size() >= client.getClientType().getValue()){
+            throw new ClientHasTooManyRentsException();
         }
         if(!willVirtualDeviceBeRented(virtualDevice,startLocalDateTime,endLocalDateTime)) {
             Rent rent = new Rent();
@@ -51,6 +55,10 @@ public class RentManager {
     public void endRent(Rent rent) {
         clientManager.findClientById(rent.getClientId()).getActiveRents().remove(rent);
         rent.setEndLocalDateTime(LocalDateTime.now());
+        clientRepository.findById(rent.getClientId()).ifPresent(client -> {
+            client.getActiveRents().remove(rent.getRentId());
+            clientRepository.save(client);
+        });
     }
     public List<Rent> findAllRents() {
         return rentRepository.findAll();
@@ -64,6 +72,7 @@ public class RentManager {
                 && !willVirtualDeviceBeRented(virtualDeviceRepository.findById(rentRepository.findById(id).get().getVirtualDeviceId()).get()
                 ,rent.getStartLocalDateTime(),endLocalDateTime)){
             rent.setEndLocalDateTime(endLocalDateTime);
+            rentRepository.save(rent);
         } else {
             throw new DeviceAlreadyRentedException();
         }
