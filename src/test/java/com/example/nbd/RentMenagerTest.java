@@ -113,7 +113,6 @@ class RentMenagerTest {
         createTestingData();
         String bufferedRentId = rentManager.findAllRents().get(0).getRentId();
         String bufferedRentId2 = rentManager.findAllRents().get(1).getRentId();
-
         var bufferedNewLocalDateTime = LocalDateTime.now().plusWeeks(3L);
         rentManager.updateEndLocalDateTime(bufferedRentId,bufferedNewLocalDateTime);
         Assertions.assertThat(rentManager.findRentById(bufferedRentId).getEndLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
