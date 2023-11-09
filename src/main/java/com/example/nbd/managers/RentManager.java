@@ -81,25 +81,10 @@ public class RentManager {
         }
     }
     private boolean willVirtualDeviceBeRented(VirtualDevice virtualDevice, LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) {
-        return rentRepository.findAllByVirtualDeviceId(virtualDevice.getId()) .stream().anyMatch(rent -> {
-                if(rent.getStartLocalDateTime().isBefore(startLocalDateTime) && rent.getEndLocalDateTime().isAfter(startLocalDateTime)) {
-                    if(!rent.getStartLocalDateTime().isEqual(startLocalDateTime)) {
-                        return true;
-                    }
-                }
-                if(rent.getStartLocalDateTime().isBefore(endLocalDateTime) && rent.getEndLocalDateTime().isAfter(endLocalDateTime)) {
-                    if(!rent.getStartLocalDateTime().isEqual(startLocalDateTime)) {
-                        return true;
-                    }
-                }
-                if(rent.getStartLocalDateTime().isAfter(startLocalDateTime) && rent.getEndLocalDateTime().isBefore(endLocalDateTime)) {
-                    if(!rent.getStartLocalDateTime().isEqual(startLocalDateTime)) {
-                        return true;
-                    }
-                }
-                return false;
-        });
-
+        return rentRepository.findAllByVirtualDeviceId(virtualDevice.getId()) .stream().anyMatch(rent ->
+                !rent.getStartLocalDateTime().equals(startLocalDateTime)
+                        &&(rent.getStartLocalDateTime().isBefore(startLocalDateTime) && rent.getEndLocalDateTime().isAfter(startLocalDateTime)
+                        || rent.getStartLocalDateTime().isBefore(endLocalDateTime) && rent.getEndLocalDateTime().isAfter(endLocalDateTime)
+                        || rent.getStartLocalDateTime().isAfter(startLocalDateTime) && rent.getEndLocalDateTime().isBefore(endLocalDateTime)));
     }
-    
 }
