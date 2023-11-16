@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.MongoTransactionManager;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 @Configuration
 public class Config {
@@ -31,6 +32,5 @@ public class Config {
     public MongoProperties mongoProperties3() {
         return new MongoProperties();
     }
-
 
 }
