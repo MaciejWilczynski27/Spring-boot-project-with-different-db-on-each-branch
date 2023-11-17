@@ -10,6 +10,7 @@ import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.repositories.ClientRepository;
 import com.example.nbd.repositories.RentRepository;
 import com.example.nbd.repositories.VirtualDeviceRepository;
+import com.mongodb.MongoTimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-@Transactional(isolation = Isolation.REPEATABLE_READ)
+@Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = MongoTimeoutException.class)
 @RequiredArgsConstructor
 public class RentManager {
 

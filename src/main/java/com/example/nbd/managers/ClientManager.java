@@ -6,6 +6,7 @@ import com.example.nbd.model.Client;
 import com.example.nbd.model.Rent;
 import com.example.nbd.model.enums.ClientType;
 import com.example.nbd.repositories.ClientRepository;
+import com.mongodb.MongoTimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
-@Transactional(isolation = Isolation.REPEATABLE_READ)
+@Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = MongoTimeoutException.class)
 @RequiredArgsConstructor
 public class ClientManager {
 

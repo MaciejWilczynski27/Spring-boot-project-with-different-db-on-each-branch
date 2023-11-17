@@ -8,6 +8,7 @@ import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.model.virtualdevices.VirtualMachine;
 import com.example.nbd.model.virtualdevices.VirtualPhone;
 import com.example.nbd.repositories.VirtualDeviceRepository;
+import com.mongodb.MongoTimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
-@Transactional(isolation = Isolation.REPEATABLE_READ)
+@Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = MongoTimeoutException.class)
 @RequiredArgsConstructor
 public class VirtualDeviceManager {
 
