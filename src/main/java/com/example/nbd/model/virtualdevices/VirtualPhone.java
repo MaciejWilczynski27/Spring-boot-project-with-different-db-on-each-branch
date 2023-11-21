@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @Document
 public class VirtualPhone extends VirtualDevice {
     private int phoneNumber;

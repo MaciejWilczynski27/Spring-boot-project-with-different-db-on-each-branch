@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @ToString(callSuper = true)
 @Document
+@EqualsAndHashCode(callSuper = true)
 public class VirtualMachine extends VirtualDevice {
     private OperatingSystemType operatingSystemType;
 }
