@@ -36,18 +36,11 @@ public class RentManager {
     private final ClientRepository clientRepository;
 
 
-    public void startRent(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
-        try {
-            startRentWithRedis(client,virtualDevice,startLocalDateTime,endLocalDateTime);
-        } catch (RedisConnectionFailureException e) {
-            startRentBody(client,virtualDevice,startLocalDateTime,endLocalDateTime);
-        }
+    public Rent startRent(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
+            return startRentBody(client,virtualDevice,startLocalDateTime,endLocalDateTime);
     }
-    @CachePut(value = "rent")
-    public void startRentWithRedis(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
-        startRentBody(client,virtualDevice,startLocalDateTime,endLocalDateTime);
-    }
-    private void startRentBody(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
+
+    private Rent startRentBody(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         if(startLocalDateTime.isAfter(endLocalDateTime)) {
             throw new InvalidDatesException();
         }
@@ -65,6 +58,7 @@ public class RentManager {
             rent.setVirtualDeviceId(virtualDevice.getId());
             rentRepository.save(rent);
             clientManager.addRent(client,rent);
+            return rent;
         } else {
             throw new DeviceAlreadyRentedException();
         }
@@ -78,53 +72,28 @@ public class RentManager {
         });
     }
     public void deleteRent(String id) {
-        try {
-            deleteRentWithRedis(id);
-        } catch (RedisConnectionFailureException e) {
             rentRepository.deleteById(id);
-        }
     }
 
-    @CacheEvict(value = "user", key = "#id")
-    public void deleteRentWithRedis(String id) {
-        rentRepository.deleteById(id);
-    }
+
 
     public List<Rent> findAllRents() {
-        try {
-            return findAllRentsWithRedis();
-        } catch (RedisConnectionFailureException e) {
             return rentRepository.findAll();
-        }
     }
-    @Cacheable(value = "rent")
+
     public List<Rent> findAllRentsWithRedis() {
         return rentRepository.findAll();
     }
 
     public Rent findRentById(String id) {
-        try {
-            return findRentByIdWithRedis(id);
-        } catch (RedisConnectionFailureException e) {
             return rentRepository.findById(id).orElse(null);
-        }
-    }
-    @Cacheable(value = "rent", key = "#id")
-    public Rent findRentByIdWithRedis(String id) {
-        return rentRepository.findById(id).orElse(null);
     }
 
+
     public void updateEndLocalDateTime(String id, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException {
-        try{
-            updateEndLocalDateTimeWithRedis(id,endLocalDateTime);
-        } catch (RedisConnectionFailureException e) {
             updateEndLocalDateTimeBody(id,endLocalDateTime);
-        }
     }
-    @CachePut(value = "rent", key = "#id")
-    public void updateEndLocalDateTimeWithRedis(String id, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException {
-        updateEndLocalDateTimeBody(id,endLocalDateTime);
-    }
+
     private void updateEndLocalDateTimeBody(String id, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException {
         Rent rent = rentRepository.findById(id).orElse(null);
         if(rent != null

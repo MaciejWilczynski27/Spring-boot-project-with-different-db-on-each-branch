@@ -1,10 +1,13 @@
 package com.example.nbd;
 
 import com.example.nbd.exceptions.NoMatchingDeviceFoundException;
-import com.example.nbd.managers.VirtualDeviceManager;
+import com.example.nbd.managers.virtualdevicemanagers.RedisAndMongoVirtualDeviceManager;
 import com.example.nbd.model.enums.DatabaseType;
 import com.example.nbd.model.enums.OperatingSystemType;
 
+import com.example.nbd.model.virtualdevices.VirtualDatabaseServer;
+import com.example.nbd.model.virtualdevices.VirtualMachine;
+import com.example.nbd.model.virtualdevices.VirtualPhone;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 public class VirtualDeviceManagerTest {
     @Autowired
-    VirtualDeviceManager virtualDeviceManager;
+    RedisAndMongoVirtualDeviceManager virtualDeviceManager;
 
     private void createVirtualDevices() {
         virtualDeviceManager.addVirtualMachine(8, 8, 512, OperatingSystemType.DEBIAN);
@@ -81,9 +84,9 @@ public class VirtualDeviceManagerTest {
         createVirtualDevices();
         String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
         virtualDeviceManager.updateVirtualMachineOperatingSystemType(bufferedId, OperatingSystemType.WINDOWS);
-        Assertions.assertThat(virtualDeviceManager.getVirtualMachineOperatingSystemType(bufferedId).equals(OperatingSystemType.WINDOWS)).isTrue();
+        Assertions.assertThat(((VirtualMachine) virtualDeviceManager.getVirtualDeviceById(bufferedId)).getOperatingSystemType().equals(OperatingSystemType.WINDOWS)).isTrue();
         virtualDeviceManager.updateVirtualMachineOperatingSystemType(bufferedId, OperatingSystemType.MACOS);
-        Assertions.assertThat(virtualDeviceManager.getVirtualMachineOperatingSystemType(bufferedId).equals(OperatingSystemType.MACOS)).isTrue();
+        Assertions.assertThat(((VirtualMachine) virtualDeviceManager.getVirtualDeviceById(bufferedId)).getOperatingSystemType().equals(OperatingSystemType.MACOS)).isTrue();
     }
     @Test
     @Transactional
@@ -91,9 +94,9 @@ public class VirtualDeviceManagerTest {
         createVirtualDevices();
         String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(2).getId();
         virtualDeviceManager.updateVirtualDatabaseServerDatabaseType(bufferedId, DatabaseType.MYSQL);
-        Assertions.assertThat(virtualDeviceManager.getVirtualDatabaseServerDatabaseType(bufferedId) == DatabaseType.MYSQL).isTrue();
+        Assertions.assertThat(((VirtualDatabaseServer) virtualDeviceManager.getVirtualDeviceById(bufferedId)).getDatabase().equals(DatabaseType.MYSQL)).isTrue();
         virtualDeviceManager.updateVirtualDatabaseServerDatabaseType(bufferedId, DatabaseType.ORACLE);
-        Assertions.assertThat(virtualDeviceManager.getVirtualDatabaseServerDatabaseType(bufferedId) == DatabaseType.ORACLE).isTrue();
+        Assertions.assertThat(((VirtualDatabaseServer) virtualDeviceManager.getVirtualDeviceById(bufferedId)).getDatabase().equals(DatabaseType.ORACLE)).isTrue();
     }
     @Test
     @Transactional
@@ -101,9 +104,9 @@ public class VirtualDeviceManagerTest {
         createVirtualDevices();
         String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(1).getId();
         virtualDeviceManager.updateVirtualPhonePhoneNumber(bufferedId, 123456789);
-        Assertions.assertThat(virtualDeviceManager.getVirtualPhonePhoneNumber(bufferedId) == 123456789).isTrue();
+        Assertions.assertThat(((VirtualPhone)virtualDeviceManager.getVirtualDeviceById(bufferedId)).getPhoneNumber() == 123456789).isTrue();
         virtualDeviceManager.updateVirtualPhonePhoneNumber(bufferedId, 987654321);
-        Assertions.assertThat(virtualDeviceManager.getVirtualPhonePhoneNumber(bufferedId) == 987654321).isTrue();
+        Assertions.assertThat(((VirtualPhone)virtualDeviceManager.getVirtualDeviceById(bufferedId)).getPhoneNumber() == 987654321).isTrue();
     }
     @Test
     @Transactional

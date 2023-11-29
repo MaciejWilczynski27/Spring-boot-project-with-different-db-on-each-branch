@@ -1,6 +1,6 @@
 package com.example.nbd.exceptions;
 
-public class ClientHasTooManyRentsException extends Exception{
+public class ClientHasTooManyRentsException extends RuntimeException{
     public ClientHasTooManyRentsException() {
         super("Client has too many rents");
     }

@@ -3,7 +3,7 @@ package com.example.nbd;
 import com.example.nbd.exceptions.*;
 import com.example.nbd.managers.ClientManager;
 import com.example.nbd.managers.RentManager;
-import com.example.nbd.managers.VirtualDeviceManager;
+import com.example.nbd.managers.virtualdevicemanagers.VirtualDeviceManager;
 import com.example.nbd.model.enums.ClientType;
 import com.example.nbd.model.enums.DatabaseType;
 import com.example.nbd.model.enums.OperatingSystemType;
