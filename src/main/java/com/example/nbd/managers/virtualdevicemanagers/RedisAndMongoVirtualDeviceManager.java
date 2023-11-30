@@ -1,9 +1,6 @@
 package com.example.nbd.managers.virtualdevicemanagers;
 
 import com.example.nbd.exceptions.NoMatchingDeviceFoundException;
-import com.example.nbd.managers.virtualdevicemanagers.RedisVirtualDeviceManager;
-import com.example.nbd.managers.virtualdevicemanagers.VMDecorator;
-import com.example.nbd.managers.virtualdevicemanagers.VirtualDeviceManager;
 import com.example.nbd.model.enums.DatabaseType;
 import com.example.nbd.model.enums.OperatingSystemType;
 import com.example.nbd.model.virtualdevices.VirtualDatabaseServer;
@@ -11,6 +8,7 @@ import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.model.virtualdevices.VirtualMachine;
 import com.example.nbd.model.virtualdevices.VirtualPhone;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +22,7 @@ import java.util.function.Supplier;
 public class RedisAndMongoVirtualDeviceManager extends VMDecorator {
     private final RedisVirtualDeviceManager redisVirtualDeviceManager;
     private final VirtualDeviceManager virtualDeviceManager;
+    private final CacheManager cacheManager;
     @Override
     public VirtualPhone addVirtualPhone(int cpuCores, int ram, int storageSize, int number) {
         return (VirtualPhone) redisMethodDefaultMongoIfFails(() -> redisVirtualDeviceManager.addVirtualPhone(cpuCores,ram,storageSize,number),
@@ -94,11 +93,12 @@ public class RedisAndMongoVirtualDeviceManager extends VMDecorator {
     @Override
     public VirtualDevice getVirtualDeviceById(String id) {
         return redisMethodDefaultMongoIfFails(redisVirtualDeviceManager::getVirtualDeviceById,
-                                              virtualDeviceManager::getVirtualDeviceById
-                                              ,id);
+                                              virtualDeviceManager::getVirtualDeviceById,
+                                              id);
     }
     private Object redisMethodDefaultMongoIfFails(Supplier<Object> redisMethod, Supplier<Object> mongoMethod){
         try{
+            testConnection();
             return redisMethod.get();
         }catch (RedisConnectionFailureException e){
             return mongoMethod.get();
@@ -106,6 +106,7 @@ public class RedisAndMongoVirtualDeviceManager extends VMDecorator {
     }
     private VirtualDevice redisMethodDefaultMongoIfFails(Function<String,VirtualDevice> redisMethod, Function<String,VirtualDevice> mongoMethod,String id){
         try{
+            testConnection();
             return redisMethod.apply(id);
         }catch (RedisConnectionFailureException e){
             return mongoMethod.apply(id);
@@ -113,9 +114,14 @@ public class RedisAndMongoVirtualDeviceManager extends VMDecorator {
     }
     private void redisMethodDefaultMongoIfFails(Consumer<String> redisMethod, Consumer<String> mongoMethod,String id){
         try{
+            testConnection();
             redisMethod.accept(id);
         }catch (RedisConnectionFailureException e){
             mongoMethod.accept(id);
         }
+    }
+    private void testConnection() {
+        redisVirtualDeviceManager.testRedisConnection();
+        redisVirtualDeviceManager.testRedisConnection();
     }
 }

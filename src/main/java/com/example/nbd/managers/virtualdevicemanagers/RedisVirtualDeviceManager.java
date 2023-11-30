@@ -9,12 +9,16 @@ import com.example.nbd.model.virtualdevices.VirtualDatabaseServer;
 import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.model.virtualdevices.VirtualMachine;
 import com.example.nbd.model.virtualdevices.VirtualPhone;
+import com.mongodb.MongoTimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -108,5 +112,10 @@ public class RedisVirtualDeviceManager extends VMDecorator {
     @Cacheable(value = "virtualDevices",key = "#id")
     public VirtualDevice getVirtualDeviceById(String id) {
         return virtualDeviceManager.getVirtualDeviceById(id);
+    }
+
+    @Cacheable(value = "testCon")
+    public int testRedisConnection(){
+        return 1;
     }
 }

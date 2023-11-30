@@ -13,8 +13,9 @@ public class BenchmarkTest {
             Options opt = new OptionsBuilder()
                     .include(VDBenchmark.class.getSimpleName())
                     .measurementIterations(1)
+                    .warmupIterations(0)
                     .shouldFailOnError(true)
-                    .addProfiler(GCProfiler.class)
+                  //  .addProfiler(GCProfiler.class)
                     .build();
             new Runner(opt).run();
 
