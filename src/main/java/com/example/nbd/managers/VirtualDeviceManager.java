@@ -8,9 +8,9 @@ import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.model.virtualdevices.VirtualMachine;
 import com.example.nbd.model.virtualdevices.VirtualPhone;
 import com.example.nbd.repositories.VirtualDeviceRepository;
-import com.mongodb.MongoTimeoutException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.CassandraConnectionFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
-@Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = MongoTimeoutException.class)
+@Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = CassandraConnectionFailureException.class)
 @RequiredArgsConstructor
 public class VirtualDeviceManager {
 
