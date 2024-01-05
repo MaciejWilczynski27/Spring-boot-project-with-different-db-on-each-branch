@@ -3,7 +3,10 @@ package com.example.nbd;
 import com.example.nbd.exceptions.DuplicateRecordException;
 import com.example.nbd.managers.ClientManager;
 import com.example.nbd.model.enums.ClientType;
+import com.example.nbd.repositories.ClientRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,14 +16,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class ClientManagerTest {
     @Autowired
     ClientManager clientManager;
+    @Autowired
+    ClientRepository clientRepository;
 
     private void addClients() throws DuplicateRecordException {
         clientManager.addClient("Mariusz","Pudzianowski", ClientType.GOLD,"Lodz","Aleje Politechniki","4/7");
         clientManager.addClient("Adam","Małysz",ClientType.BRONZE,"Warszawa","Nowy Swiat","7");
 
     }
+    @BeforeEach
+    @AfterEach
+    private void clearDatabase() {
+        clientRepository.deleteAll();
+    }
     @Test
-    @Transactional
     void cantAddClientWithSameNameAndSurnameAndAddressTest() throws DuplicateRecordException {
         addClients();
         try {
@@ -31,7 +40,6 @@ public class ClientManagerTest {
         }
     }
     @Test
-    @Transactional
     void addClientTest() throws DuplicateRecordException {
         int buffer = clientManager.findAllClients().size();
         addClients();
@@ -39,7 +47,6 @@ public class ClientManagerTest {
     }
 
     @Test
-    @Transactional
     void deleteClientTest() throws DuplicateRecordException {
         addClients();
         int buffer = clientManager.findAllClients().size();
@@ -49,14 +56,12 @@ public class ClientManagerTest {
         Assertions.assertThat(clientManager.findClientById(idBuffer) == null).isTrue();
     }
     @Test
-    @Transactional
     void findClientTest() throws DuplicateRecordException {
         addClients();
         Assertions.assertThat(clientManager.findAllClients().get(0)
                 .equals(clientManager.findClientById(clientManager.findAllClients().get(0).getId()))).isTrue();
     }
     @Test
-    @Transactional
     void updateClientTypeTest() throws DuplicateRecordException {
         addClients();
         String idBuffer = clientManager.findAllClients().get(0).getId();
@@ -66,7 +71,6 @@ public class ClientManagerTest {
         Assertions.assertThat(clientManager.findClientById(idBuffer).getClientType().equals(ClientType.BRONZE)).isTrue();
     }
     @Test
-    @Transactional
     void updateFirstNameAndLastNameTest() throws DuplicateRecordException {
         addClients();
         String idBuffer = clientManager.findAllClients().get(0).getId();
@@ -78,7 +82,6 @@ public class ClientManagerTest {
         Assertions.assertThat(clientManager.findClientById(idBuffer).getLastName().equals("Pudzianowski")).isTrue();
     }
     @Test
-    @Transactional
     void updateAddressTest() throws DuplicateRecordException {
         addClients();
         String idBuffer = clientManager.findAllClients().get(0).getId();

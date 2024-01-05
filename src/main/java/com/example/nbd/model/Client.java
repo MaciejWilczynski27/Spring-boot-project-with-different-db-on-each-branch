@@ -4,13 +4,14 @@ package com.example.nbd.model;
 import com.example.nbd.model.enums.ClientType;
 
 import lombok.*;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
-import org.springframework.data.cassandra.core.mapping.Table;
+import org.springframework.data.cassandra.core.mapping.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Data
+@NoArgsConstructor
 @Table
 public class Client {
 
@@ -20,6 +21,7 @@ public class Client {
     private boolean isActive;
     private String lastName;
     private ClientType clientType;
+    @Embedded.Nullable
     private Address address;
     private List<String> activeRents = new ArrayList<>();
 

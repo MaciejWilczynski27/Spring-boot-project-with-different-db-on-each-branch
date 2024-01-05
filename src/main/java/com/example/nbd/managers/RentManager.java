@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Component
-@Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = CassandraConnectionFailureException.class)
 @RequiredArgsConstructor
 public class RentManager {
 
@@ -43,6 +43,7 @@ public class RentManager {
         }
         if(!willVirtualDeviceBeRented(virtualDevice,startLocalDateTime,endLocalDateTime)) {
             Rent rent = new Rent();
+            rent.setRentId(UUID.randomUUID().toString());
             rent.setStartLocalDateTime(startLocalDateTime);
             rent.setEndLocalDateTime(endLocalDateTime);
             rent.setClientId(client.getId());

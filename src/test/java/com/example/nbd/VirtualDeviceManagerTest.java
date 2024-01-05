@@ -5,31 +5,40 @@ import com.example.nbd.managers.VirtualDeviceManager;
 import com.example.nbd.model.enums.DatabaseType;
 import com.example.nbd.model.enums.OperatingSystemType;
 
+import com.example.nbd.repositories.VirtualDeviceRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 public class VirtualDeviceManagerTest {
     @Autowired
     VirtualDeviceManager virtualDeviceManager;
+    @Autowired
+    VirtualDeviceRepository virtualDeviceRepository;
 
     private void createVirtualDevices() {
         virtualDeviceManager.addVirtualMachine(8, 8, 512, OperatingSystemType.DEBIAN);
         virtualDeviceManager.addVirtualPhone(4, 4, 128, 782921842);
         virtualDeviceManager.addVirtualDatabaseServer(32, 128, 4096, DatabaseType.POSTGRESQL);
     }
+    @BeforeEach
+    @AfterEach
+    private void clearDatabase() {
+        virtualDeviceRepository.deleteAll();
+    }
     @Test
-    @Transactional
     void findAllVirtualDeviceTest() {
         int virtualDeviceBuffer = virtualDeviceManager.findAllVirtualDevices().size();
         createVirtualDevices();
         Assertions.assertThat(virtualDeviceBuffer + 3 == virtualDeviceManager.findAllVirtualDevices().size()).isTrue();
     }
     @Test
-    @Transactional
     void deleteVirtualDeviceTest() {
         createVirtualDevices();
         int virtualDeviceBuffer = virtualDeviceManager.findAllVirtualDevices().size();
@@ -39,14 +48,12 @@ public class VirtualDeviceManagerTest {
         Assertions.assertThat(virtualDeviceManager.getVirtualDeviceById(bufferedId) == null).isTrue();
     }
     @Test
-    @Transactional
     void getVirtualDeviceTest() {
         createVirtualDevices();
         Assertions.assertThat(virtualDeviceManager.findAllVirtualDevices().get(0)
                 .equals(virtualDeviceManager.getVirtualDeviceById(virtualDeviceManager.findAllVirtualDevices().get(0).getId()))).isTrue();
     }
     @Test
-    @Transactional
     void updateVirtualDeviceRamTest() {
         createVirtualDevices();
         String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
@@ -56,7 +63,6 @@ public class VirtualDeviceManagerTest {
         Assertions.assertThat(virtualDeviceManager.getVirtualDeviceById(bufferedId).getRam() == 32).isTrue();
     }
     @Test
-    @Transactional
     void updateVirtualDeviceStorageSizeTest() {
         createVirtualDevices();
         String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
@@ -66,7 +72,6 @@ public class VirtualDeviceManagerTest {
         Assertions.assertThat(virtualDeviceManager.getVirtualDeviceById(bufferedId).getStorageSize() == 2048).isTrue();
     }
     @Test
-    @Transactional
     void updateVirtualDeviceCpuCoresTest() {
         createVirtualDevices();
         String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
@@ -76,7 +81,6 @@ public class VirtualDeviceManagerTest {
         Assertions.assertThat(virtualDeviceManager.getVirtualDeviceById(bufferedId).getCpuCores() == 32).isTrue();
     }
     @Test
-    @Transactional
     void updateVirtualMachineOperatingSystemTypeTest() throws NoMatchingDeviceFoundException {
         createVirtualDevices();
         String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
@@ -86,37 +90,34 @@ public class VirtualDeviceManagerTest {
         Assertions.assertThat(virtualDeviceManager.getVirtualMachineOperatingSystemType(bufferedId).equals(OperatingSystemType.MACOS)).isTrue();
     }
     @Test
-    @Transactional
     void updateVirtualDatabaseServerDatabaseTypeTest() throws NoMatchingDeviceFoundException {
         createVirtualDevices();
-        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(2).getId();
+        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(1).getId();
         virtualDeviceManager.updateVirtualDatabaseServerDatabaseType(bufferedId, DatabaseType.MYSQL);
         Assertions.assertThat(virtualDeviceManager.getVirtualDatabaseServerDatabaseType(bufferedId) == DatabaseType.MYSQL).isTrue();
         virtualDeviceManager.updateVirtualDatabaseServerDatabaseType(bufferedId, DatabaseType.ORACLE);
         Assertions.assertThat(virtualDeviceManager.getVirtualDatabaseServerDatabaseType(bufferedId) == DatabaseType.ORACLE).isTrue();
     }
     @Test
-    @Transactional
     void updateVirtualPhonePhoneNumberTest() throws NoMatchingDeviceFoundException {
         createVirtualDevices();
-        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(1).getId();
+        String bufferedId = virtualDeviceManager.findAllVirtualDevices().get(2).getId();
         virtualDeviceManager.updateVirtualPhonePhoneNumber(bufferedId, 123456789);
         Assertions.assertThat(virtualDeviceManager.getVirtualPhonePhoneNumber(bufferedId) == 123456789).isTrue();
         virtualDeviceManager.updateVirtualPhonePhoneNumber(bufferedId, 987654321);
         Assertions.assertThat(virtualDeviceManager.getVirtualPhonePhoneNumber(bufferedId) == 987654321).isTrue();
     }
     @Test
-    @Transactional
     void noMatchingDeviceFoundExceptionTest() {
         createVirtualDevices();
         try {
-            virtualDeviceManager.updateVirtualMachineOperatingSystemType(virtualDeviceManager.findAllVirtualDevices().get(2).getId(), OperatingSystemType.WINDOWS);
+            virtualDeviceManager.updateVirtualMachineOperatingSystemType(virtualDeviceManager.findAllVirtualDevices().get(1).getId(), OperatingSystemType.WINDOWS);
             Assertions.fail("Exception has not been thrown");
         } catch (NoMatchingDeviceFoundException e) {
             Assertions.assertThat(e.getMessage().equals("No matching device was found!")).isTrue();
         }
         try {
-            virtualDeviceManager.updateVirtualDatabaseServerDatabaseType(virtualDeviceManager.findAllVirtualDevices().get(1).getId(), DatabaseType.MYSQL);
+            virtualDeviceManager.updateVirtualDatabaseServerDatabaseType(virtualDeviceManager.findAllVirtualDevices().get(2).getId(), DatabaseType.MYSQL);
             Assertions.fail("Exception has not been thrown");
         } catch (NoMatchingDeviceFoundException e) {
             Assertions.assertThat(e.getMessage().equals("No matching device was found!")).isTrue();

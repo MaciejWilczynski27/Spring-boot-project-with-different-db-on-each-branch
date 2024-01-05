@@ -12,10 +12,12 @@ import org.springframework.data.cassandra.CassandraConnectionFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
-@Transactional(isolation = Isolation.REPEATABLE_READ, rollbackFor = CassandraConnectionFailureException.class)
 @RequiredArgsConstructor
 public class ClientManager {
 
@@ -30,11 +32,13 @@ public class ClientManager {
         address.setCity(city);
         address.setStreet(street);
         address.setHouseNumber(houseNumber);
+        client.setId(UUID.randomUUID().toString());
         client.setClientType(clientType);
         client.setAddress(address);
         client.setFirstName(firstName);
         client.setLastName(lastName);
         client.setActive(true);
+        client.setActiveRents(new ArrayList<>());
         if(clientRepository
                 .existsByFirstNameAndLastNameAndAddress_CityAndAddress_StreetAndAddress_HouseNumber(client.getFirstName()
                 ,client.getLastName()

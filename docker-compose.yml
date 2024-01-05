@@ -1,37 +1,53 @@
-version: '3.8'
+version: '3.9'
+
 
 services:
   cassandra1:
-    image: cassandra:latest
-    container_name: cassandra1
-    environment:
-      - CASSANDRA_CLUSTER_NAME=MyCluster
-      - CASSANDRA_SEEDS=cassandra1
-      - CASSANDRA_LISTEN_ADDRESS=cassandra1
+    image:
+      docker.io/bitnami/cassandra:latest
+    hostname: cassandra1
     ports:
+      - "7000:7000"
       - "9042:9042"
     networks:
-      - cassandra-net
+      - cassandranet
+    environment:
+      - CASSANDRA_LISTEN_ADDRESS=cassandra1
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra1
+      - CASSANDRA_SEEDS=cassandra1,cassandra2
+      - CASSANDRA_CLUSTER_NAME=nbd-cassandra-cluster
+      - CASSANDRA_DATACENTER=dc1
+      - CASSANDRA_HOST=cassandra1
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_USER=cassandra
+      - CASSANDRA_PASSWORD=cassandrapassword
+      - MAX_HEAP_SIZE=2G
+      - HEAP_NEWSIZE=200M
 
   cassandra2:
-    image: cassandra:latest
-    container_name: cassandra2
+    image:
+      docker.io/bitnami/cassandra:latest
+    hostname: cassandra2
+    ports:
+      - "7001:7000"
+      - "9043:9042"
+    networks:
+      - cassandranet
     environment:
-      - CASSANDRA_CLUSTER_NAME=MyCluster
-      - CASSANDRA_SEEDS=cassandra1
       - CASSANDRA_LISTEN_ADDRESS=cassandra2
-    networks:
-      - cassandra-net
-
-  cassandra3:
-    image: cassandra:latest
-    container_name: cassandra3
-    environment:
-      - CASSANDRA_CLUSTER_NAME=MyCluster
-      - CASSANDRA_SEEDS=cassandra1
-      - CASSANDRA_LISTEN_ADDRESS=cassandra3
-    networks:
-      - cassandra-net
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra2
+      - CASSANDRA_SEEDS=cassandra1,cassandra2
+      - CASSANDRA_CLUSTER_NAME=nbd-cassandra-cluster
+      - CASSANDRA_DATACENTER=dc1
+      - CASSANDRA_HOST = cassandra2
+      - CASSANDRA_PASSWORD_SEEDER=yes
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+      - CASSANDRA_USER=cassandra
+      - CASSANDRA_PASSWORD=cassandrapassword
+      - MAX_HEAP_SIZE=2G
+      - HEAP_NEWSIZE=200M
 
 networks:
-  cassandra-net:
+  cassandranet: {}
+

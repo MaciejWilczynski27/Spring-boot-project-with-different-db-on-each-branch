@@ -16,9 +16,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Component
-@Transactional(isolation = Isolation.REPEATABLE_READ,rollbackFor = CassandraConnectionFailureException.class)
 @RequiredArgsConstructor
 public class VirtualDeviceManager {
 
@@ -40,6 +40,7 @@ public class VirtualDeviceManager {
         addVirtualDevice(virtualMachine,cpuCores, ram, storageSize);
     }
     private void addVirtualDevice(VirtualDevice virtualDevice,int cpuCores,int ram, int storageSize){
+        virtualDevice.setId(UUID.randomUUID().toString());
         virtualDevice.setCpuCores(cpuCores);
         virtualDevice.setRam(ram);
         virtualDevice.setStorageSize(storageSize);

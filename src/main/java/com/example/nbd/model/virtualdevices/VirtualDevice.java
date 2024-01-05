@@ -5,12 +5,14 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
+
+import java.util.UUID;
 
 @Getter
 @Setter
 @ToString
-@Table
 public abstract class VirtualDevice {
     @PrimaryKey
     private String id;
