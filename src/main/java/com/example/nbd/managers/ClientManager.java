@@ -63,6 +63,7 @@ public class ClientManager {
     public void addRent(Client client, Rent rent) {
       var clientOpt =  clientRepository.findById(client.getId());
       clientOpt.ifPresent(value -> {
+          value.setActiveRents(client.getActiveRents());
           value.getActiveRents().add(rent.getRentId());
           clientRepository.save(value);
       });

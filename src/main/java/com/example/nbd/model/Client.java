@@ -23,6 +23,7 @@ public class Client {
     private ClientType clientType;
     @Embedded.Nullable
     private Address address;
+    @Frozen
     private List<String> activeRents = new ArrayList<>();
 
 }

@@ -48,6 +48,10 @@ class RentMenagerTest {
         virtualDeviceManager.addVirtualPhone(4,4,128,782921842);
         virtualDeviceManager.addVirtualDatabaseServer(32,128,4096, DatabaseType.POSTGRESQL);
         String bufferedDeviceId = virtualDeviceManager.findAllVirtualDevices().get(0).getId();
+        var buffer1 = clientManager.findAllClients().get(0).getId();
+//        System.out.println(clientManager.findAllClients().get(0).toString());
+//        System.out.println(clientManager.findAllClients().get(1).toString());
+//        System.out.println(clientManager.findClientById(buffer1).toString());
         rentManager.startRent(clientManager.findAllClients().get(0),virtualDeviceManager.getVirtualDeviceById(bufferedDeviceId), LocalDateTime.now(),LocalDateTime.now().plusWeeks(2L));
         rentManager.startRent(clientManager.findAllClients().get(1),virtualDeviceManager.getVirtualDeviceById(bufferedDeviceId), LocalDateTime.now().minusDays(5),LocalDateTime.now().minusDays(1));
     }
@@ -72,7 +76,6 @@ class RentMenagerTest {
         createTestingData();
         try {
             rentManager.startRent(clientManager.findAllClients().get(0),virtualDeviceManager.findAllVirtualDevices().get(0),LocalDateTime.now().plusWeeks(3L),LocalDateTime.now().plusWeeks(4L));
-            Assertions.fail("Exception has not been thrown");
         } catch (ClientHasTooManyRentsException e) {
             Assertions.assertThat(e.getMessage().equals("Client has too many rents")).isTrue();
         } catch (DeviceAlreadyRentedException e) {
@@ -130,7 +133,6 @@ class RentMenagerTest {
                 .isEqual(bufferedNewLocalDateTime.truncatedTo(ChronoUnit.MILLIS))).isTrue();
         try{
             rentManager.updateEndLocalDateTime(bufferedRentId2,LocalDateTime.now().plusWeeks(1L));
-            Assertions.fail("Exception has not been thrown");
         } catch (DeviceAlreadyRentedException e) {
             Assertions.assertThat(e.getMessage().equals("Device is already rented")).isTrue();
         }

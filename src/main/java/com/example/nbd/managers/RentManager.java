@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,6 +39,7 @@ public class RentManager {
         if(!client.isActive()) {
             throw new ClientIsNotActiveException();
         }
+        if(client.getActiveRents()==null) client.setActiveRents(new ArrayList<>());
         if(client.getActiveRents().size() >= client.getClientType().getValue()){
             throw new ClientHasTooManyRentsException();
         }
