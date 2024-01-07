@@ -30,6 +30,7 @@ public class RentManager {
 
     private final ClientManager clientManager;
     private final ClientRepository clientRepository;
+    private final Producer producer;
 
     public void startRent(Client client, VirtualDevice virtualDevice,LocalDateTime startLocalDateTime, LocalDateTime endLocalDateTime) throws DeviceAlreadyRentedException, ClientHasTooManyRentsException, InvalidDatesException, ClientIsNotActiveException {
         if(startLocalDateTime.isAfter(endLocalDateTime)) {
@@ -49,6 +50,7 @@ public class RentManager {
             rent.setVirtualDeviceId(virtualDevice.getId());
             rentRepository.save(rent);
             clientManager.addRent(client,rent);
+            producer.sendRent(rent);
         } else {
             throw new DeviceAlreadyRentedException();
         }
