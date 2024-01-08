@@ -18,7 +18,7 @@ public class RentConsumer {
     private final RentRepository rentRepository;
 
     @SneakyThrows
-    @KafkaListener(topics = "${kafka.topic1.name}", concurrency = "2")
+    @KafkaListener(topics = "${kafka.topic1.name}")
     public void consume(ConsumerRecord<String, String> payload){
         Rent rent = objectMapper().readValue(payload.value(), Rent.class);
         System.out.println("\n" + topicName+ ":  " + rent);
