@@ -6,6 +6,7 @@ import com.example.nbd.exceptions.DeviceAlreadyRentedException;
 import com.example.nbd.exceptions.InvalidDatesException;
 import com.example.nbd.model.Client;
 import com.example.nbd.model.Rent;
+import com.example.nbd.model.RentDTO;
 import com.example.nbd.model.virtualdevices.VirtualDevice;
 import com.example.nbd.repositories.ClientRepository;
 import com.example.nbd.repositories.RentRepository;
@@ -50,7 +51,7 @@ public class RentManager {
             rent.setVirtualDeviceId(virtualDevice.getId());
             rentRepository.save(rent);
             clientManager.addRent(client,rent);
-            producer.sendRent(rent);
+            producer.sendRent(new RentDTO(rent,"VMRental"));
         } else {
             throw new DeviceAlreadyRentedException();
         }
