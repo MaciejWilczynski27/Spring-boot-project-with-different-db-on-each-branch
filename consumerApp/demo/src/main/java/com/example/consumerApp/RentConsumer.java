@@ -16,22 +16,18 @@ public class RentConsumer {
     @Value("${kafka.topic1.name}")
     private String topicName;
     private final RentRepository rentRepository;
+    private final ObjectMapper objectMapper;
 
     @SneakyThrows
     @KafkaListener(topics = "${kafka.topic1.name}")
     public void consume(ConsumerRecord<String, String> payload){
-        Rent rent = objectMapper().readValue(payload.value(), Rent.class);
+        Rent rent = objectMapper.readValue(payload.value(), Rent.class);
         System.out.println("\n" + topicName+ ":  " + rent);
         var rent1 = rentRepository.save(rent);
         System.out.println("Saved: " + rent1);
 
     }
-    @Bean
-    private ObjectMapper objectMapper(){
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        return objectMapper;
-    }
+
 
 }
 
