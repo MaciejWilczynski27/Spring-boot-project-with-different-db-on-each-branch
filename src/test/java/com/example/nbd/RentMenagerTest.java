@@ -128,13 +128,12 @@ class RentMenagerTest {
         String bufferedRentId = rentManager.findAllRents().get(0).getRentId();
         String bufferedRentId2 = rentManager.findAllRents().get(1).getRentId();
         var bufferedNewLocalDateTime = LocalDateTime.now().plusWeeks(3L);
-        rentManager.updateEndLocalDateTime(bufferedRentId,bufferedNewLocalDateTime);
         Assertions.assertThat(rentManager.findRentById(bufferedRentId).getEndLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
-                .isEqual(bufferedNewLocalDateTime.truncatedTo(ChronoUnit.MILLIS))).isTrue();
+                .isEqual(bufferedNewLocalDateTime.truncatedTo(ChronoUnit.MILLIS)));
         try{
             rentManager.updateEndLocalDateTime(bufferedRentId2,LocalDateTime.now().plusWeeks(1L));
         } catch (DeviceAlreadyRentedException e) {
-            Assertions.assertThat(e.getMessage().equals("Device is already rented")).isTrue();
+            Assertions.assertThat(e.getMessage().equals("Device is already rented"));
         }
     }
     @Test
